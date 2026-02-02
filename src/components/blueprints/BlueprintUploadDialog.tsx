@@ -3,18 +3,22 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useBlueprints } from '@/hooks/useBlueprints';
+import { useProjects } from '@/hooks/useProjects';
 import { Loader2, Upload, File, X } from 'lucide-react';
 
 interface BlueprintUploadDialogProps {
-  projectId: string;
+  projectId?: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 export function BlueprintUploadDialog({ projectId, open, onOpenChange }: BlueprintUploadDialogProps) {
   const { uploadBlueprint } = useBlueprints();
+  const { projects } = useProjects();
   const [name, setName] = useState('');
+  const [selectedProjectId, setSelectedProjectId] = useState(projectId || '');
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -30,16 +34,18 @@ export function BlueprintUploadDialog({ projectId, open, onOpenChange }: Bluepri
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file) return;
+    const targetProjectId = projectId || selectedProjectId;
+    if (!file || !targetProjectId) return;
 
     await uploadBlueprint.mutateAsync({
       file,
-      projectId,
+      projectId: targetProjectId,
       name,
     });
 
     setName('');
     setFile(null);
+    setSelectedProjectId(projectId || '');
     onOpenChange(false);
   };
 
@@ -50,6 +56,8 @@ export function BlueprintUploadDialog({ projectId, open, onOpenChange }: Bluepri
     }
   };
 
+  const targetProjectId = projectId || selectedProjectId;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -57,6 +65,24 @@ export function BlueprintUploadDialog({ projectId, open, onOpenChange }: Bluepri
           <DialogTitle>Upload Blueprint</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {!projectId && (
+            <div className="space-y-2">
+              <Label htmlFor="project">Project *</Label>
+              <Select value={selectedProjectId} onValueChange={setSelectedProjectId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a project" />
+                </SelectTrigger>
+                <SelectContent>
+                  {projects.map((project) => (
+                    <SelectItem key={project.id} value={project.id}>
+                      {project.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
           <div className="space-y-2">
             <Label htmlFor="name">Blueprint Name *</Label>
             <Input
@@ -107,7 +133,7 @@ export function BlueprintUploadDialog({ projectId, open, onOpenChange }: Bluepri
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={!file || uploadBlueprint.isPending}>
+            <Button type="submit" disabled={!file || !targetProjectId || uploadBlueprint.isPending}>
               {uploadBlueprint.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Upload
             </Button>

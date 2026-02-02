@@ -2,16 +2,19 @@ import { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useBlueprints } from '@/hooks/useBlueprints';
 import { useProjects } from '@/hooks/useProjects';
-import { Search, FileText } from 'lucide-react';
+import { Search, FileText, Upload } from 'lucide-react';
 import { BlueprintCard } from '@/components/blueprints/BlueprintCard';
+import { BlueprintUploadDialog } from '@/components/blueprints/BlueprintUploadDialog';
 
 export default function Blueprints() {
   const { projects } = useProjects();
   const [selectedProject, setSelectedProject] = useState<string>('all');
   const [search, setSearch] = useState('');
+  const [uploadOpen, setUploadOpen] = useState(false);
   
   const { blueprints, isLoading } = useBlueprints(
     selectedProject === 'all' ? undefined : selectedProject
@@ -24,9 +27,15 @@ export default function Blueprints() {
   return (
     <AppLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Blueprints</h1>
-          <p className="text-muted-foreground">View and manage all project blueprints</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">Blueprints</h1>
+            <p className="text-muted-foreground">View and manage all project blueprints</p>
+          </div>
+          <Button onClick={() => setUploadOpen(true)}>
+            <Upload className="mr-2 h-4 w-4" />
+            Upload Blueprint
+          </Button>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4">
@@ -68,7 +77,7 @@ export default function Blueprints() {
               <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
               <p className="text-muted-foreground">No blueprints found</p>
               <p className="text-sm text-muted-foreground mt-1">
-                Upload blueprints from the project detail view
+                Click "Upload Blueprint" to add your first blueprint
               </p>
             </CardContent>
           </Card>
@@ -80,6 +89,8 @@ export default function Blueprints() {
           </div>
         )}
       </div>
+
+      <BlueprintUploadDialog open={uploadOpen} onOpenChange={setUploadOpen} />
     </AppLayout>
   );
 }
