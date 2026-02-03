@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 
 const navItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+  { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
   { icon: FolderKanban, label: 'Projects', path: '/projects' },
   { icon: FileText, label: 'Blueprints', path: '/blueprints' },
   { icon: Activity, label: 'Activity', path: '/activity' },
@@ -52,7 +52,8 @@ export function Sidebar() {
 
       <nav className="flex-1 p-2 space-y-1">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.path;
+          const isActive = location.pathname === item.path || 
+            (item.path !== '/' && location.pathname.startsWith(item.path));
           return (
             <Link
               key={item.path}
