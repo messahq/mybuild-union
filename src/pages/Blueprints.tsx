@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { AppLayout } from '@/components/layout/AppLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -25,8 +24,7 @@ export default function Blueprints() {
   );
 
   return (
-    <AppLayout>
-      <div className="space-y-6">
+    <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Blueprints</h1>
@@ -88,9 +86,8 @@ export default function Blueprints() {
             ))}
           </div>
         )}
-      </div>
 
       <BlueprintUploadDialog open={uploadOpen} onOpenChange={setUploadOpen} />
-    </AppLayout>
+    </div>
   );
 }
