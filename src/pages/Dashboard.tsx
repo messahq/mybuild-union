@@ -1,4 +1,3 @@
-import { AppLayout } from '@/components/layout/AppLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useProjects } from '@/hooks/useProjects';
 import { useBlueprints } from '@/hooks/useBlueprints';
@@ -36,8 +35,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <AppLayout>
-      <div className="space-y-6">
+    <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold">Dashboard</h1>
           <p className="text-muted-foreground">Overview of your construction projects</p>
@@ -120,7 +118,6 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </div>
-      </div>
-    </AppLayout>
+    </div>
   );
 }
